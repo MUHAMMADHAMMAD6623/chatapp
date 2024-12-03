@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      ::placeholder {
+        font-family: "poppins", sans-serif;
+      }
+      ::-webkit-scrollbar {
+          width: 7px;
+        }
+        ::-webkit-scrollbar-thumb {
+          background-color: grey;
+          border-radius: 10px;
+        }
+      body {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sidebar {
+        width: 25%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        overflow-y: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgb(247, 247, 247);
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+          rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        padding: 20px 30px;
+        gap: 1rem;
+        z-index: 99;
+      }
+      .sidebar .top h2 {
+        font-family: "poppins", sans-serif;
+      }
+      .sidebar .chats ul li {
+        list-style: none;
+      }
+      .sidebar .chats,
+      .sidebar .contacts-list {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar .top {
+        width: 100%;
+      }
+      .sidebar .chats a,
+      .sidebar .contacts-list a {
+        font-family: "poppins", sans-serif;
+        border-radius: 7px;
+        transition: 0.25s ease-in-out background-color;
+        padding: 15px 10px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        position: relative;
+        color: black;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+      .sidebar .chats a:hover,
+      .sidebar .contacts-list a:hover {
+        background-color: rgb(233, 233, 233);
+      }
+      .sidebar .chats a::before,
+      .sidebar .contacts-list a::before {
+        content: "";
+        background-image: url("http://localhost:1000/views/imag/contact.png");
+        background-size: cover;
+        background-position: center;
+        position: absolute;
+        left: 7px;
+        /* bottom: -1px; */
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+      }
+      .sidebar .chats a span,
+      .sidebar .contacts-list a span {
+        position: relative;
+        left: 57px;
+      }
+      .sidebar .top .search {
+        width: 100%;
+        height: fit-content;
+        padding: 3px 0;
+      }
+      .sidebar .top .search input {
+        padding: 6px 15px;
+        border: none;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        width: 92%;
+        font-family: "poppins", sans-serif;
+      }
+      .sidebar .top .search input:focus {
+        outline: none;
+      }
+      .sidebar .top {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      .sidebar .top .search a {
+        padding: 0px 10px;
+        font-size: 1.3rem;
+        border: none;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: white;
+        transition: 0.2s ease-in-out background-color;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-family: "poppins", sans-serif;
+        color: black;
+      }
+      .sidebar .top .search a:hover {
+        background-color: rgb(233, 233, 233);
+      }
+      .sidebar .top .search {
+        display: flex;
+        flex-direction: row;
+        gap: 0.6rem;
+      }
+      .right {
+        width: 75%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .right .topbar {
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+          rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 100%;
+        padding: 20px 25px;
+        background-color: rgb(247, 247, 247);
+      }
+      .right .dm {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        padding: 15px 25px;
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+          rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        background-color: rgb(247, 247, 247);
+        display: flex;
+        gap: 0.6rem;
+      }
+      .right .topbar h3 {
+        font-family: "poppins", sans-serif;
+        font-weight: 500;
+        font-size: 1.3rem;
+      }
+      .right .dm input {
+        padding: 10px 15px;
+        border: none;
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+          rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        width: 92%;
+        font-family: "poppins", sans-serif;
+      }
+      .right .dm input:focus {
+        outline: none;
+      }
+      .right .dm button {
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+          rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        padding: 0px 10px;
+        font-size: 0.9rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: white;
+        transition: 0.2s ease-in-out background-color;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-family: "poppins", sans-serif;
+        color: black;
+      }
+      .right .dm button:hover {
+        background-color: rgb(233, 233, 233);
+      }
+      .sidebar .top .search #toggleContacts {
+        transition: 0.3s ease-in-out transform;
+      }
+      .sidebar .top .search #toggleContacts.rotate {
+        transform: rotate(45deg);
+      }
+      .msgs {
+        position: absolute;
+        right: 0;
+        top: 72px;
+        bottom: 72px;
+        width: 100%;
+        padding: 17px;
+        overflow: auto;
+      }
+      .msgs div {
+        width: 100%;
+        word-wrap: break-word;
+        padding: 10px;
+        font-family: 'poppins';
+        margin: 10px 0;
+      }
+      .msgs .sent{
+        display: flex;
+        justify-content: flex-end;
+      }
+      .msgs .sent span{
+        background-color: blue;
+        padding: 7px;
+        color: white;
+        display: flex;
+        justify-content: flex-end;
+        width: fit-content;
+        border-radius: 7px;
+        max-width: 70%;
+      }
+      .msgs .received span{
+        background-color: rgb(233, 233, 233);
+        padding: 7px;
+        border-radius: 7px;
+        width: fit-content;
+        display: flex;
+        justify-content: flex-start;
+        max-width: 70%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="top">
+        <h2 class="sidebar-heading"></h2>
+        <div class="search">
+          <input type="text" placeholder="Search" />
+          <a href="" id="toggleContacts" title="Show all users">+</a>
+        </div>
+      </div>
+      <div class="chats">
+        <% usersChattedWith.forEach(function(user, index) { %>
+          <a href="/chat/<%= userID[index].id %>">
+            <span><%= user %></span>
+          </a>
+        <% }) %>
+      </div>
+      <div class="contacts-list">
+        <% allUsers.forEach(user => { %>
+        <a
+          href="http://localhost:1000/chat/<%= user.id %>"
+          title="Chat <%= user.username %>"
+        >
+          <span><%= user.username %></span>
+        </a>
+        <% }) %>
+      </div>
+    </div>
+    <div class="right">
+      <div class="topbar">
+        <h3>
+          <%= dedUser ? dedUser.username : 'Select a user to start chatting' %>
+        </h3>
+      </div>
+      <div class="msgs">
+        <% if (messages) { %> <% messages.forEach(message => { %>
+        <div
+          class="<%= message.from === dedUser.username ? 'received' : 'sent' %>"
+        >
+          <span><%= message.content %></span>
+        </div>
+        <% }) %> <% } %>
+      </div>
+      <div class="dm">
+        <input type="text" placeholder="Enter message..." id="input" />
+        <button class="submit">Send</button>
+      </div>
+    </div>
+    <script src="http://localhost:1000/socket.io/socket.io.js"></script>
+    <script>
+            const toggleContacts = document.getElementById("toggleContacts");
+            const contacts = document.querySelector(".contacts-list");
+            const chats = document.querySelector(".chats");
+            const heading = document.querySelector('.sidebar-heading')
+
+            contacts.style.display = "none";
+            heading.textContent = 'Your Chats';
+            toggleContacts.addEventListener("click", (e) => {
+              e.preventDefault();
+              if (chats.style.display != "none") {
+                chats.style.display = "none";
+                contacts.style.display = "block";
+                heading.textContent = 'All Users';
+              } else {
+                chats.style.display = "block";
+                contacts.style.display = "none";
+                heading.textContent = 'Your Chats';
+              }
+            });
+            const socket = io();
+
+      const input = document.getElementById('input');
+      const submit = document.querySelector('.submit');
+      const msgsBox = document.querySelector('.msgs');
+
+      // Emit a new message
+      submit.addEventListener('click', () => {
+        const message = input.value.trim();
+        if (message) {
+          const msgData = {
+            from: '<%= loggedInUser %>',
+            to: '<%= dedUser ? dedUser.username : '' %>',
+            content: message,
+          };
+          socket.emit('message', msgData);
+          input.value = '';
+        }
+      });
+
+      // Listen for new messages
+      socket.on('message', (msg) => {
+        if (
+    msg.from === '<%= loggedInUser %>' && msg.to === '<%= dedUser.username || "" %>' ||
+    msg.from === '<%= dedUser.username || "" %>' && msg.to === '<%= loggedInUser %>'
+  )  {
+          const messageDiv = document.createElement('div');
+          messageDiv.innerHTML = `<span>${msg.content}</span>`
+          messageDiv.className = msg.from === '<%= loggedInUser %>' ? 'sent' : 'received';
+          msgsBox.appendChild(messageDiv);
+        }
+      });
+    </script>
+  </body>
+</html>
