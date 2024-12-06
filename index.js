@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
-});
+})
 
 
 app.get('/', authenticateToken, async (req, res) => {
